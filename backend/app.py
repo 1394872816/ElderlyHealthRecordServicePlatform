@@ -25,14 +25,14 @@ app = Flask(__name__,
 CORS(app)
 
 DB_CONFIG = {
-    'host': '*********',
-    'user': '*********',
-    'password': '*******',
+    'host': 'localhost',
+    'user': 'root',
+    'password': '123456',
     'database': 'health_platform_db',
     'charset': 'utf8mb4'
 }
 
-DEEPSEEK_API_KEY = "**************"
+DEEPSEEK_API_KEY = "sk-53f18d0604804b6a88fc43878eec5215"
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 
 client = OpenAI(
@@ -141,7 +141,7 @@ def get_health_data():
             
         cursor = conn.cursor(dictionary=True)
         
-        sql = f"SELECT id, user_id, name, data_type, data_value, DATE_FORMAT(record_date, '%Y-%m-%d %H:%i:%s') AS record_time, description FROM health_data WHERE user_id = {user_id_int} ORDER BY record_date DESC"
+        sql = f"SELECT id, user_id, name, data_type, data_value, DATE_FORMAT(record_date, '%Y-%m-%d %H:%i:%s') AS record_date, description FROM health_data WHERE user_id = {user_id_int} ORDER BY record_date DESC"
         cursor.execute(sql)
         
         health_data_results = cursor.fetchall()
@@ -167,16 +167,16 @@ def add_health_data():
     name = data.get('name')
     data_type = data.get('dataType')
     data_value = data.get('dataValue')
-    record_time = data.get('record_time')
+    record_date = data.get('record_date')
     description = data.get('description')
 
-    if not all([user_id, name, data_type, data_value, record_time]):
+    if not all([user_id, name, data_type, data_value, record_date]):
         missing_fields = []
         if not user_id: missing_fields.append('user_id')
         if not name: missing_fields.append('name')
         if not data_type: missing_fields.append('dataType')
         if not data_value: missing_fields.append('dataValue')
-        if not record_time: missing_fields.append('record_time')
+        if not record_date: missing_fields.append('record_date')
         return jsonify({"success": False, "message": f"缺少必要的数据字段: {', '.join(missing_fields)}"}), 400
     
     conn = get_db_connection()
@@ -186,7 +186,7 @@ def add_health_data():
     cursor = conn.cursor()
     try:
         sql = "INSERT INTO health_data (user_id, name, data_type, data_value, record_date, description) VALUES (%s, %s, %s, %s, %s, %s)"
-        params = (user_id, name, data_type, data_value, record_time, description)
+        params = (user_id, name, data_type, data_value, record_date, description)
         cursor.execute(sql, params)
         conn.commit()
         return jsonify({"success": True, "message": "数据添加成功", "inserted_id": cursor.lastrowid}), 201
@@ -245,14 +245,14 @@ def update_health_data(data_id):
         update_query = """
             UPDATE health_data 
             SET name = %s, data_type = %s, data_value = %s, 
-                record_time = %s, description = %s
+                record_date = %s, description = %s
             WHERE id = %s
         """
         cursor.execute(update_query, (
             data.get('name'),
             data.get('dataType'),
             data.get('dataValue'),
-            data.get('record_time'),
+            data.get('record_date'),
             data.get('description'),
             data_id
         ))
