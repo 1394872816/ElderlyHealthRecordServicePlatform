@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const recordTime = formData.get('record_time');
+            const recordTime = formData.get('record_date');
             const fileInput = formData.get('file'); 
             const description = formData.get('description');
             let dataValue = formData.get('manualDataValue') || '';
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 name: name.trim(),
                 dataType: dataType,
                 dataValue: dataValue,
-                record_time: recordTime,
+                record_date: recordTime,
                 description: description
             };
 
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (customDataTypeInput) customDataTypeInput.style.display = 'none';
                     const dataTypeSelect = document.getElementById('dataType');
                     if (dataTypeSelect) dataTypeSelect.value = '';
-                    const recordTimeInput = document.getElementById('record_time');
+                    const recordTimeInput = document.getElementById('record_date');
                     if (recordTimeInput) {
                         recordTimeInput.value = new Date().toISOString().slice(0, 16);
                     }
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    const recordTimeInput = document.getElementById('record_time');
+    const recordTimeInput = document.getElementById('record_date');
     if (recordTimeInput) {
         recordTimeInput.value = new Date().toISOString().slice(0, 16);
     }
@@ -452,7 +452,7 @@ function displayHealthData(data) {
             </div>
             <div class="card-content">
                 <p class="data-value">${escapeHtml(item.data_value)}</p>
-                <p class="record-time"><i class="fas fa-calendar"></i> ${new Date(item.record_time).toLocaleString()}</p>
+                <p class="record-time"><i class="fas fa-calendar"></i> ${new Date(item.record_date).toLocaleString()}</p>
                 ${item.description ? `<p class="description"><i class="fas fa-info-circle"></i> ${escapeHtml(item.description)}</p>` : ''}
             </div>
             <div class="card-actions">
@@ -883,7 +883,7 @@ function editHealthData(data) {
 
     document.getElementById('name').value = data.name;
     document.getElementById('dataType').value = data.data_type;
-    document.getElementById('record_time').value = data.record_time.slice(0, 16);
+    document.getElementById('record_date').value = data.record_date.slice(0, 16);
     document.getElementById('manualDataValue').value = data.data_value;
     document.getElementById('description').value = data.description || '';
 
@@ -903,7 +903,7 @@ function editHealthData(data) {
                 name: formData.get('name'),
                 dataType: formData.get('dataType'),
                 dataValue: formData.get('manualDataValue'),
-                record_time: formData.get('record_time'),
+                record_date: formData.get('record_date'),
                 description: formData.get('description')
             };
 
