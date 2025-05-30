@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 老年人健康档案服务平台</title>
+    <link rel="stylesheet" href="css/login.style.css">
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[DEBUG] Login page loaded');
+            
+            if (AuthManager.isLoggedIn()) {
+                console.log('[DEBUG] User already logged in, redirecting to home');
+                window.location.href = 'home.html';
+                return;
+            }
+
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    console.log('[DEBUG] Login form submitted');
+
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+
+                    try {
+                        const response = await fetch('http://127.0.0.1:5000/api/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                username: username,
+                                password: password
+                            })
+                        });
+
+                        const data = await response.json();
+                        console.log('[DEBUG] Login response:', data);
+
+                        if (data.success) {
+                            AuthManager.setUserId(data.user_id);
+                            console.log('[DEBUG] User ID stored:', data.user_id);
+                            
+                            alert('登录成功！');
+                            window.location.href = 'home.html';
+                        } else {
+                            const messageDiv = document.getElementById('message');
+                            messageDiv.textContent = data.message || '登录失败，请检查用户名和密码。';
+                            messageDiv.className = 'message error';
+                        }
+                    } catch (error) {
+                        console.error('[ERROR] Login error:', error);
+                        const messageDiv = document.getElementById('message');
+                        messageDiv.textContent = '登录过程中发生错误，请稍后重试。';
+                        messageDiv.className = 'message error';
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h2>老年人健康档案服务平台</h2>
+            <p class="subtitle">用户登录</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn-primary">登 录</button>
+                <div id="message" class="message"></div>
+                <p class="register-link">
+                    还没有账号？<a href="/register">立即注册</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
