@@ -32,7 +32,7 @@ DB_CONFIG = {
     'charset': 'utf8mb4'
 }
 
-DEEPSEEK_API_KEY = "sk-53f18d0604804b6a88fc43878eec5215"
+DEEPSEEK_API_KEY = ""
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 
 client = OpenAI(
